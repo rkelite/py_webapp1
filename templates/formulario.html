@@ -25,13 +25,13 @@
 </form>
 
 <div>
-    <table>
+    <table class="table table-dark">
         <thead>
             <tr>
-                <td>Fullname</td>
-                <td>Phone</td>
-                <td>Email</td>
-                <td>Operations</td>
+                <td scope="col">Fullname</td>
+                <td scope="col">Phone</td>
+                <td scope="col">Email</td>
+                <td scope="col">Operations</td>
             </tr>
         </thead>
         <tbody>
@@ -40,9 +40,14 @@
                     <td>{{contact.1}}</td>
                     <td>{{contact.2}}</td>
                     <td>{{contact.3}}</td>
+                    <td>
+                        <a href="/edit/{{contact.0}}">Editar</a>
+                        <a href="/delete/{{contact.0}}">Borrar</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
 {% endblock %}

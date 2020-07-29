@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template , url_for, flash
+from flask import Flask, request, render_template , url_for, flash, redirect
 from flask_mysqldb import MySQL, MySQLdb
 
 app=Flask(__name__)
@@ -23,16 +23,45 @@ def add_contact():
         cur.execute("INSERT INTO contacts (fullname, phone, email) VALUES (%s,%s,%s)", (fullname, phone, email))
         mysql.connection.commit()
         flash("Contacto agregado")
-        return render_template("formulario.html")
+        return render_template('formulario.html')
 
 
-@app.route('/edit')
-def edit_contact():
-    return "edit_contact"
+@app.route('/edit/<id>')
+def edit_contact(id):
+    cur=mysql.connection.cursor()
+    cur.execute('SELECT * FROM contacts WHERE id= %s', (id))
+    data=cur.fetchall()
+    cur.close()
+    return render_template('edit_c.html', contact=data[0])
 
-@app.route('/delete_contact')
-def delete_contact():
-    return "delete_contact"
+
+@app.route('/Update/<id>', methods= ['POST'])
+def update_contact(id):
+    if request.method == 'POST':
+        fullname = request.form['fullname']
+        phone = request.form['phone']
+        email = request.form['email']
+        cur=mysql.connection.cursor()
+        cur.execute("""
+            UPDATE contacts
+            SET Fullname = %s,
+                Phone = %s,
+                Email = %s
+            WHERE  id = %s    
+            """,(fullname,phone,email, id))
+        mysql.connection.commit()
+        flash("Contacto actualizado")
+        return redirect(url_for('form'))
+
+
+@app.route('/delete/<string:id>')
+def delete_contact(id):
+    cur=mysql.connection.cursor()
+    cur.execute('DELETE FROM contacts WHERE id={0}'.format(id))
+    mysql.connection.commit()
+    flash('Contact eliminado')
+    return redirect(url_for('form'))
+
 
 @app.route('/form')
 def form():
