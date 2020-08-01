@@ -26,10 +26,10 @@ def add_contact():
         return render_template('formulario.html')
 
 
-@app.route('/edit/<id>')
+@app.route('/edit/<string:id>')
 def edit_contact(id):
     cur=mysql.connection.cursor()
-    cur.execute('SELECT * FROM contacts WHERE id= %s', (id))
+    cur.execute('SELECT * FROM contacts WHERE id= {}'.format(id))
     data=cur.fetchall()
     cur.close()
     return render_template('edit_c.html', contact=data[0])
